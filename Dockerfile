@@ -107,7 +107,7 @@ ADD ./supervisord.conf /etc/supervisord.conf
 ADD ./default.conf /etc/nginx/conf.d/default.conf
 
 # Override default nginx welcome page
-COPY html /usr/share/nginx/html
+# COPY . /usr/share/nginx/app
 
 # Add Scripts
 ADD ./start.sh /start.sh
