@@ -1,6 +1,6 @@
 FROM debian:buster
 
-LABEL maintainer="Colin Wilson colin@wyveo.com"
+LABEL maintainer="Jose Urrego <jwurrego.co@outlook.com>"
 
 # Let the container know that there is no tty
 ENV DEBIAN_FRONTEND noninteractive
@@ -105,9 +105,6 @@ ADD ./supervisord.conf /etc/supervisord.conf
 
 # Override nginx's default config
 ADD ./default.conf /etc/nginx/conf.d/default.conf
-
-# Override default nginx welcome page
-# COPY . /usr/share/nginx/app
 
 # Add Scripts
 ADD ./start.sh /start.sh
