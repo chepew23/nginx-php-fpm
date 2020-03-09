@@ -33,7 +33,7 @@ RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
     && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
     && apt-get update \
-    && ACCEPT_EULA=Y apt-get install msodbcsql17 unixodbc-dev mssql-tools \
+    && ACCEPT_EULA=Y apt-get install msodbcsql17 unixodbc-dev mssql-tools -q -y \
     && apt-get install --no-install-recommends --no-install-suggests -q -y \
             apt-utils \
             nano \
