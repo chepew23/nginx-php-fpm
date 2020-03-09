@@ -10,7 +10,7 @@ ENV fpm_conf /etc/php/7.3/fpm/pool.d/www.conf
 ENV COMPOSER_VERSION 1.9.0
 
 # Install Basic Requirements
-RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
+RUN buildDeps='curl gcc g++ make autoconf libc-dev zlib1g-dev pkg-config' \
     && set -x \
     && apt-get update \
     && apt-get install --no-install-recommends $buildDeps --no-install-suggests -q -y gnupg2 dirmngr wget apt-transport-https lsb-release ca-certificates \
@@ -90,8 +90,8 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && echo "extension=redis.so" > /etc/php/7.3/mods-available/redis.ini \
     && echo "extension=memcached.so" > /etc/php/7.3/mods-available/memcached.ini \
     && echo "extension=imagick.so" > /etc/php/7.3/mods-available/imagick.ini \
-    && echo "extension=sqlsrv.so" > /etc/php/7.3/mods-available/sqlsrv.ini \
-    && echo "extension=pdo_sqlsrv.so" > /etc/php/7.3/mods-available/pdo_sqlsrv.ini \
+    && echo ";priority=20\nextension=sqlsrv.so\n" > /etc/php/7.3/mods-available/sqlsrv.ini \
+    && echo ";priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/7.3/mods-available/pdo_sqlsrv.ini \
     && ln -sf /etc/php/7.3/mods-available/redis.ini /etc/php/7.3/fpm/conf.d/20-redis.ini \
     && ln -sf /etc/php/7.3/mods-available/redis.ini /etc/php/7.3/cli/conf.d/20-redis.ini \
     && ln -sf /etc/php/7.3/mods-available/memcached.ini /etc/php/7.3/fpm/conf.d/20-memcached.ini \
@@ -100,8 +100,10 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && ln -sf /etc/php/7.3/mods-available/imagick.ini /etc/php/7.3/cli/conf.d/20-imagick.ini \
     && ln -sf /etc/php/7.3/mods-available/sqlsrv.ini /etc/php/7.3/fpm/conf.d/20-sqlsrv.ini \
     && ln -sf /etc/php/7.3/mods-available/sqlsrv.ini /etc/php/7.3/cli/conf.d/20-sqlsrv.ini \
-    && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/fpm/conf.d/20-pdo_sqlsrv.ini \
-    && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/cli/conf.d/20-pdo_sqlsrv.ini
+    && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/fpm/conf.d/30-pdo_sqlsrv.ini \
+    && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/cli/conf.d/30-pdo_sqlsrv.ini
+
+RUN phpenmod -v 7.3 sqlsrv pdo_sqlsrv
 
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
   && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
