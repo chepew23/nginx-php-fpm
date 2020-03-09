@@ -63,13 +63,16 @@ RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
             php7.3-pgsql \
             php7.3-intl \
             php7.3-xml \
-            php-pear \
-    && pecl -d php_suffix=7.3 install -o -f redis memcached imagick sqlsrv pdo_sqlsrv \
-    && mkdir -p /run/php \
+            php-pear
+
+RUN pecl channel-update pecl.php.net && pecl -d php_suffix=7.3 install -o -f redis memcached imagick sqlsrv pdo_sqlsrv
+
+RUN mkdir -p /run/php \
     && pip install wheel \
     && pip install supervisor supervisor-stdout \
-    && echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d \
-    && rm -rf /etc/nginx/conf.d/default.conf \
+    && echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+
+RUN rm -rf /etc/nginx/conf.d/default.conf \
     && sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" ${php_conf} \
     && sed -i -e "s/memory_limit\s*=\s*.*/memory_limit = 256M/g" ${php_conf} \
     && sed -i -e "s/upload_max_filesize\s*=\s*2M/upload_max_filesize = 100M/g" ${php_conf} \
