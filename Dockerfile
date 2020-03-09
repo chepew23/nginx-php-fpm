@@ -30,7 +30,10 @@ RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
     echo "deb http://nginx.org/packages/mainline/debian/ buster nginx" >> /etc/apt/sources.list \
     && wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg \
     && echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
     && apt-get update \
+    && ACCEPT_EULA=Y apt-get install msodbcsql17 unixodbc-dev mssql-tools \
     && apt-get install --no-install-recommends --no-install-suggests -q -y \
             apt-utils \
             nano \
@@ -42,6 +45,7 @@ RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
             libmemcached-dev \
             libmemcached11 \
             libmagickwand-dev \
+            wkhtmltopdf \
             nginx=${NGINX_VERSION} \
             php7.3-fpm \
             php7.3-cli \
@@ -60,7 +64,7 @@ RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
             php7.3-intl \
             php7.3-xml \
             php-pear \
-    && pecl -d php_suffix=7.3 install -o -f redis memcached imagick \
+    && pecl -d php_suffix=7.3 install -o -f redis memcached imagick sqlsrv pdo_sqlsrv \
     && mkdir -p /run/php \
     && pip install wheel \
     && pip install supervisor supervisor-stdout \
@@ -83,12 +87,18 @@ RUN buildDeps='curl gcc make autoconf libc-dev zlib1g-dev pkg-config' \
     && echo "extension=redis.so" > /etc/php/7.3/mods-available/redis.ini \
     && echo "extension=memcached.so" > /etc/php/7.3/mods-available/memcached.ini \
     && echo "extension=imagick.so" > /etc/php/7.3/mods-available/imagick.ini \
+    && echo "extension=sqlsrv.so" > /etc/php/7.3/mods-available/sqlsrv.ini \
+    && echo "extension=pdo_sqlsrv.so" > /etc/php/7.3/mods-available/pdo_sqlsrv.ini \
     && ln -sf /etc/php/7.3/mods-available/redis.ini /etc/php/7.3/fpm/conf.d/20-redis.ini \
     && ln -sf /etc/php/7.3/mods-available/redis.ini /etc/php/7.3/cli/conf.d/20-redis.ini \
     && ln -sf /etc/php/7.3/mods-available/memcached.ini /etc/php/7.3/fpm/conf.d/20-memcached.ini \
     && ln -sf /etc/php/7.3/mods-available/memcached.ini /etc/php/7.3/cli/conf.d/20-memcached.ini \
     && ln -sf /etc/php/7.3/mods-available/imagick.ini /etc/php/7.3/fpm/conf.d/20-imagick.ini \
-    && ln -sf /etc/php/7.3/mods-available/imagick.ini /etc/php/7.3/cli/conf.d/20-imagick.ini
+    && ln -sf /etc/php/7.3/mods-available/imagick.ini /etc/php/7.3/cli/conf.d/20-imagick.ini \
+    && ln -sf /etc/php/7.3/mods-available/sqlsrv.ini /etc/php/7.3/fpm/conf.d/20-sqlsrv.ini \
+    && ln -sf /etc/php/7.3/mods-available/sqlsrv.ini /etc/php/7.3/cli/conf.d/20-sqlsrv.ini \
+    && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/fpm/conf.d/20-pdo_sqlsrv.ini \
+    && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/cli/conf.d/20-pdo_sqlsrv.ini
 
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
   && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
