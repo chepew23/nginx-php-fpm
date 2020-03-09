@@ -115,6 +115,9 @@ RUN rm -rf /tmp/pear \
     && apt-get purge -y --auto-remove $buildDeps \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Environments variables to Web Applications
+ENV WKHTMLTOPDF_BINPATH wkhtmltopdf
+
 # Supervisor config
 ADD ./supervisord.conf /etc/supervisord.conf
 
