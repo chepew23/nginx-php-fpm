@@ -105,11 +105,11 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/fpm/conf.d/30-pdo_sqlsrv.ini \
     && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/cli/conf.d/30-pdo_sqlsrv.ini
 
-RUN phpenmod -v 7.3 sqlsrv pdo_sqlsrv tidy imap
+RUN phpenmod -v 7.3 sqlsrv pdo_sqlsrv tidy imap imagick
 
 # Add php configurations
-ADD ./daruma.ini /etc/php/7.3/cli/conf.d/40-daruma.ini
-ADD ./daruma.ini /etc/php/7.3/fpm/conf.d/40-daruma.ini
+ADD ./extra.ini /etc/php/7.3/cli/conf.d/40-extra.ini
+ADD ./extra.ini /etc/php/7.3/fpm/conf.d/40-extra.ini
 
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
   && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
