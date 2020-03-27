@@ -64,6 +64,7 @@ RUN buildDeps='curl gcc g++ make autoconf libc-dev zlib1g-dev pkg-config' \
             php7.3-intl \
             php7.3-tidy \
             php7.3-xml \
+            php7.3-imap \
             php-pear
 
 RUN pecl channel-update pecl.php.net && pecl -d php_suffix=7.3 install -o -f redis memcached imagick sqlsrv pdo_sqlsrv
@@ -104,10 +105,11 @@ RUN rm -rf /etc/nginx/conf.d/default.conf \
     && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/fpm/conf.d/30-pdo_sqlsrv.ini \
     && ln -sf /etc/php/7.3/mods-available/pdo_sqlsrv.ini /etc/php/7.3/cli/conf.d/30-pdo_sqlsrv.ini
 
-RUN phpenmod -v 7.3 sqlsrv pdo_sqlsrv
+RUN phpenmod -v 7.3 sqlsrv pdo_sqlsrv tidy imap
 
 # Add php configurations
 ADD ./daruma.ini /etc/php/7.3/cli/conf.d/40-daruma.ini
+ADD ./daruma.ini /etc/php/7.3/fpm/conf.d/40-daruma.ini
 
 RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
   && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
